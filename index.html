@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LokaClip - Simpan & Bagikan Klip Anda</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#6366f1', // Indigo 500
+                        secondary: '#a855f7', // Purple 500
+                        dark: '#0f172a', // Slate 900
+                        darker: '#020617', // Slate 950
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* darker */
+            color: #f8fafc;
+        }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .feature-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="antialiased overflow-x-hidden">
+
+    <div class="blob bg-primary w-96 h-96 rounded-full top-[-10%] left-[-10%]"></div>
+    <div class="blob bg-secondary w-96 h-96 rounded-full top-[20%] right-[-10%] opacity-20"></div>
+
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-lg shadow-primary/30">
+                        <i class="fa-solid fa-scissors text-white text-xl"></i>
+                    </div>
+                    <span class="font-bold text-2xl tracking-tight">Loka <span class="text-primary">Clip</span></span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#" class="text-slate-300 hover:text-white transition-colors text-sm font-medium">Beranda</a>
+                    <a href="#" class="text-slate-300 hover:text-white transition-colors text-sm font-medium">Harga</a>
+                    <a href="#" class="text-slate-300 hover:text-white transition-colors text-sm font-medium">Unduh</a>
+                    <a href="#" class="text-slate-300 hover:text-white transition-colors text-sm font-medium">FAQ</a>
+                    <button class="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-full text-sm font-medium transition-all border border-white/10">
+                        Masuk
+                    </button>
+                     <!-- Link Pendaftaran Desktop -->
+                    <a href="https://lokaclip.pro/?ref=BEM3480" class="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white px-6 py-2 rounded-full text-sm font-medium transition-all shadow-lg shadow-primary/25 inline-block">
+                        Daftar Gratis
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-white/10">
+            <div class="px-2 pt-2 pb-4 space-y-1 sm:px-3">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">Beranda</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">Harga</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">Unduh</a>
+                <div class="pt-4 flex flex-col gap-2">
+                    <button class="w-full text-center bg-slate-800 text-white px-5 py-2 rounded-lg text-base font-medium">Masuk</button>
+                    <a href="https://lokaclip.pro/?ref=BEM3480" class="w-full text-center bg-gradient-to-r from-primary to-secondary text-white px-5 py-2 rounded-lg text-base font-medium">Daftar Gratis</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="beranda" class="pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto text-center relative z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-medium mb-6">
+                <i class="fa-brands fa-rust text-lg"></i>
+                AI Auto Clipper Desktop Berbasis Rust
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                Clip video viral. <br />
+                <span class="gradient-text">Langsung dari laptop kamu.</span>
+            </h1>
+            
+            <p class="mt-4 text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed">
+                Bikin klip viral gak perlu laptop mahal. Loka Clip — AI clipper desktop teringan, berbasis Rust. Render 100% lokal, tanpa upload ke cloud, tanpa watermark, tanpa batas.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                <!-- Link Pendaftaran Hero -->
+                <a href="https://lokaclip.pro/?ref=BEM3480" class="bg-gradient-to-r from-primary to-secondary hover:scale-105 text-white px-8 py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/30">
+                    Mulai Buat Akun Gratis
+                </a>
+                <a href="https://lokaclip.pro/?ref=BEM3480" class="bg-slate-800/80 hover:bg-slate-700 text-white px-8 py-3.5 rounded-xl font-medium border border-slate-600 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i>
+                    Unduh Loka Clip Desktop
+                </a>
+            </div>
+            
+             <!-- Video Demo Player -->
+            <div class="mt-12 relative mx-auto max-w-4xl rounded-2xl border border-slate-700 shadow-2xl overflow-hidden bg-slate-900 aspect-video hover:border-primary/50 transition-colors">
+                <!-- Overlay gradient dihilangkan sementara agar tidak menutupi tombol controls -->
+                
+                <!-- Tag Video: Ditambah 'autoplay' langsung dari HTML dan 'controls' untuk testing -->
+                <video id="demo-video" class="w-full h-full object-cover relative z-0" autoplay muted loop playsinline controls>
+                    <!-- Pastikan lokasi file ini persis: assets/lokaclip-demo.mp4 -->
+                    <source src="aset/video.mp4" type="video/mp4">
+                    Browser kamu tidak mendukung pemutaran video ini.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Section -->
+    <section id="workflow" class="py-24 bg-slate-900/50 relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white">Dari video panjang ke <span class="text-primary">klip viral.</span></h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Left: Steps -->
+                <div class="flex flex-col gap-6 pl-4 md:pl-10">
+                    <!-- Step 1 Inactive -->
+                    <div class="flex items-center gap-5 text-slate-500 opacity-60">
+                        <div class="w-12 h-12 rounded-full border-2 border-slate-700 flex items-center justify-center font-bold text-lg">01</div>
+                        <div class="text-xl font-medium">Upload</div>
+                    </div>
+                    
+                    <!-- Step 2 Active -->
+                    <div class="flex items-start gap-5 relative py-4">
+                        <!-- Connecting line to top & bottom -->
+                        <div class="absolute left-6 top-[-20px] bottom-[-20px] w-0.5 bg-gradient-to-b from-slate-700 via-primary to-slate-700 -z-10"></div>
+                        
+                        <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg shadow-[0_0_20px_rgba(99,102,241,0.5)] shrink-0 z-10">02</div>
+                        <div class="bg-slate-800/80 p-6 rounded-2xl border border-primary/30 backdrop-blur-sm -mt-2">
+                            <div class="text-primary text-sm font-bold mb-2 tracking-wider uppercase">Step 02 / 04</div>
+                            <h3 class="text-2xl font-bold text-white mb-3">AI menemukan momen menarik</h3>
+                            <p class="text-slate-400 leading-relaxed">Whisper + LLM menganalisis emosi, intensitas, dan hook dari transcript. Klip 30–90 detik terbaik dipilih otomatis.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3 Inactive -->
+                    <div class="flex items-center gap-5 text-slate-500 opacity-60">
+                        <div class="w-12 h-12 rounded-full border-2 border-slate-700 flex items-center justify-center font-bold text-lg bg-[#020617] z-10">03</div>
+                        <div class="text-xl font-medium">Subtitle</div>
+                    </div>
+                    
+                    <!-- Step 4 Inactive -->
+                    <div class="flex items-center gap-5 text-slate-500 opacity-60 mt-2">
+                        <div class="w-12 h-12 rounded-full border-2 border-slate-700 flex items-center justify-center font-bold text-lg">04</div>
+                        <div class="text-xl font-medium">Publish</div>
+                    </div>
+                </div>
+
+                <!-- Right: UI Mockup / AI Terminal -->
+                <div class="relative">
+                    <!-- Glow behind -->
+                    <div class="absolute inset-0 bg-primary/20 blur-[100px] rounded-full"></div>
+                    
+                    <div class="relative bg-[#0f172a] rounded-xl border border-slate-700 shadow-2xl overflow-hidden font-mono">
+                        <!-- Window Header -->
+                        <div class="bg-slate-800/80 px-4 py-3 flex items-center gap-2 border-b border-slate-700">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-3 text-xs text-slate-400">lokaclip-engine.rs</span>
+                        </div>
+                        
+                        <!-- Window Body -->
+                        <div class="p-6 md:p-8">
+                            <div class="flex justify-between items-center text-primary mb-6 text-sm md:text-base">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-microchip"></i> Analyzing...
+                                </span>
+                                <span class="animate-pulse flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/30">
+                                    <div class="w-2 h-2 bg-primary rounded-full"></div> AI Active
+                                </span>
+                            </div>
+                            
+                            <div class="text-slate-300 mb-6 text-sm md:text-base">> Detecting viral moments...</div>
+                            
+                            <!-- Video Timeline Bar -->
+                            <div class="mb-2 flex justify-between text-xs text-slate-500">
+                                <span>00:00</span>
+                                <span>01:00</span>
+                                <span>02:00</span>
+                                <span>02:34</span>
+                            </div>
+                            <div class="h-2 bg-slate-800 rounded-full overflow-hidden mb-8 relative">
+                                <div class="w-[85%] h-full bg-slate-600 relative"></div>
+                                <!-- Moment Markers -->
+                                <div class="absolute top-0 left-[15%] w-[10%] h-full bg-primary/80 shadow-[0_0_10px_#6366f1]"></div>
+                                <div class="absolute top-0 left-[45%] w-[8%] h-full bg-primary/80 shadow-[0_0_10px_#6366f1]"></div>
+                                <div class="absolute top-0 left-[75%] w-[12%] h-full bg-primary/80 shadow-[0_0_10px_#6366f1]"></div>
+                            </div>
+                            
+                            <!-- Extracted Timestamps -->
+                            <div class="flex flex-wrap gap-3 mb-8">
+                                <span class="px-3 py-1.5 bg-primary/20 text-primary border border-primary/40 rounded-lg text-sm flex items-center gap-2"><i class="fa-solid fa-cut text-xs"></i> 0:24</span>
+                                <span class="px-3 py-1.5 bg-primary/20 text-primary border border-primary/40 rounded-lg text-sm flex items-center gap-2"><i class="fa-solid fa-cut text-xs"></i> 1:18</span>
+                                <span class="px-3 py-1.5 bg-primary/20 text-primary border border-primary/40 rounded-lg text-sm flex items-center gap-2"><i class="fa-solid fa-cut text-xs"></i> 2:09</span>
+                            </div>
+                            
+                            <!-- Success Message -->
+                            <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 font-semibold flex items-center gap-3">
+                                <i class="fa-solid fa-circle-check text-xl"></i>
+                                <span>12 momen viral terdeteksi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- Bottom CTA Section -->
+    <section class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-primary/10 -z-10"></div>
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">
+                Buat Akun Gratis dan Mulai Viralkan Clipmu
+            </h2>
+            <a href="https://lokaclip.pro/?ref=BEM3480" class="inline-block bg-gradient-to-r from-primary to-secondary hover:scale-105 hover:shadow-primary/50 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-xl shadow-primary/30">
+                Mulai Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#0f172a] border-t border-white/10 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-2">
+                            <i class="fa-solid fa-scissors text-white text-sm"></i>
+                        </div>
+                        <span class="font-bold text-xl">Loka <span class="text-primary">Clip</span></span>
+                    </div>
+                    <p class="text-slate-400 max-w-md mb-6 leading-relaxed">
+                        AI Auto Clipper Desktop untuk YouTuber & kreator Indonesia. <strong class="text-white">Sekali bayar Rp 119.000</strong>, render unlimited langsung di laptop — hemat RAM, tanpa watermark.
+                    </p>
+                    
+                    <a href="https://lokaclip.pro/?ref=BEM3480" class="inline-flex items-center gap-2 bg-[#0088cc]/10 hover:bg-[#0088cc]/20 text-[#0088cc] border border-[#0088cc]/30 px-4 py-2 rounded-lg transition-colors font-medium">
+                        <i class="fa-solid fa-user-plus"></i> Daftar Gratis
+                    </a>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Produk</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-400 hover:text-primary transition-colors text-sm">Beranda</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-primary transition-colors text-sm">Harga</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-primary transition-colors text-sm">Unduh</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-primary transition-colors text-sm">Program Referral</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-400 hover:text-primary transition-colors text-sm">FAQ</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-primary transition-colors text-sm">Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-primary transition-colors text-sm">Komunitas</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex gap-6 mb-4 md:mb-0">
+                    <a href="#" class="text-slate-400 hover:text-white text-sm">Masuk</a>
+                    <a href="#" class="text-slate-400 hover:text-white text-sm">Daftar Gratis</a>
+                    <a href="mailto:support@lokaclip.pro" class="text-slate-400 hover:text-white text-sm">support@lokaclip.pro</a>
+                </div>
+                <p class="text-slate-500 text-sm">© 2026 Loka Clip. Hak Cipta Dilindungi Undang-Undang.</p>
+                <div class="flex items-center gap-1.5 text-sm text-slate-500">
+                    <span>Made with</span>
+                    <i class="fa-solid fa-heart text-red-500"></i>
+                    <span>in Indonesia</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center p-4 mb-4 text-white bg-slate-800 rounded-lg shadow-lg border border-slate-700 pointer-events-none" role="alert">
+        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-blue-500 bg-blue-100 rounded-lg">
+            <i class="fa-solid fa-info-circle"></i>
+        </div>
+        <div id="toast-message" class="ms-3 text-sm font-normal">Pesan default</div>
+    </div>
+
+    <script>
+        // Mobile menu toggle logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navbar = document.getElementById('navbar');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-lg');
+                navbar.style.background = 'rgba(15, 23, 42, 0.9)';
+            } else {
+                navbar.classList.remove('shadow-lg');
+                navbar.style.background = 'rgba(15, 23, 42, 0.7)';
+            }
+        });
+
+        // Custom Toast functionality
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message || "Aksi berhasil (Simulasi)";
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
